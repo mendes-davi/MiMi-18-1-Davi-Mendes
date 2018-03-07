@@ -1,7 +1,21 @@
 # Aula 1 - Respostas
 
-### 1. O que são sistemas embarcados?
+### O que são sistemas embarcados?
+Sistemas embarcads podem ser definidos como um dispositivo que contém hardware e software acoplados para realizar uma função específica, formando parte de um sistema maior. Tais sistemas não são programáveis pelos usuários e é esperado que realizem sua função específica com interação mínima ou sem interação humana. Duas características muito comuns em sistemas embarcados são: operam reagindo a estímulos externos e apresentam grandes limitações de projeto tanto em hardware como em software.
+### O que são sistemas microprocessados?
+São sistemas que utilizam microcontroladores e seus periféricos, formando um "computador em um chip" para realizar suas atividades empregando software e hardware.
+### Apresente aplicações de sistemas embarcados:
+- Para indústria automotiva:
+  - Controle de frenagem, air-bags, ABS.
+- Para eletrodomésticos:
+  - Controle de refrigeramento em Ar-condicionado, Controle de Fogões.
+- Para automação industrial:
+  - Robótica Industrial, CNC (Comando Numérico Computadorizado). 
+### 
 
+
+
+###1. O que são sistemas embarcados?
   Sistemas embarcads podem ser definidos como um dispositivo que contém hardware e software acoplados para realizar uma função específica, formando parte de um sistema maior. Tais sistemas não são programáveis pelos usuários e é esperado que realizem sua função específica com interação mínima ou sem interação humana. Duas características muito comuns em sistemas embarcados são: operam reagindo a estímulos externos e apresentam grandes limitações de projeto tanto em hardware como em software.
 ###2. O que são sistemas microprocesssados?
 São sistemas que utilizam microcontroladores e seus periféricos, formando um "computador em um chip" para realizar suas atividades empregando software e hardware.
@@ -21,8 +35,8 @@ Podemos definir Microprocessadores em 2 categorias:
   - *DSP - Digital Signal Processors*
     Microprocessadores programáveis para aplicações de tempo real *RTOS* com computações numéricas extensas.
   - *ASIC - Application Specific Integrated Circuit*
-    Algoritmo completamente implementado em hardware.
+	Algoritmo completamente implementado em hardware.
   - *ASIP - Application Specific Instruction Set Processor*
-    Microprocessador programável no qual hardware e o set de instruções são desenvolvidos juntos para uma aplicação específica.
+  	Microprocessador programável no qual hardware e o set de instruções são desenvolvidos juntos para uma aplicação específica.
 ###5. Por que usamos o MSP430 na disciplina, ao invés de outro microcontrolador?
 Utilizamos o MSP430 por ser um componente ideal para o estudo de Microcontroladores e Microprocessadores com capacidades técnicas para desenvolvimento de aplicações compatíveis com os objetivos da disciplina e diferencia-se do Arduino por não ser tão voltado para prototipação e hobbies.
