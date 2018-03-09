@@ -32,6 +32,7 @@ A variável `i` Será armazenada na memória RAM, pois essa variável faz parte 
     Em uma arquitetura Harvard temos barramentos separados para dados e endereços, podendo ter diferentes tamanhos entre si. Geralmente essa arquitetura é mais elaborada e apresenta maior complexidade com memórias separadas. A arquitetura Von Neumann emprega um único barramento para dados e endereços, podendo acessar a memória de programas e dados juntamente. Por utilizar um único barramento, temos como vantagem uma menor complexidade de projeto do microprocessador.
 
 5.  Considere a variável inteira `i`, armazenando o valor `0x8051ABCD`. Se `i` é armazenada na memória a partir do endereço `0x0200`, como ficam este byte e os seguintes, considerando que a memória é: (a) Little-endian; (b) Big-endian.
+
 | Little Endian  | Big Endian      |
 | -------------- | --------------- |
 | `0x200` - `CD` | `0x200` - `CD`  |
