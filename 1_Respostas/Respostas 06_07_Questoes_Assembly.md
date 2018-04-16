@@ -60,47 +60,91 @@ int Potencia(int x, int N);
 ```
 
 ```C
+int Multiplica(int a, int b)
+{
+    int res = 0;
+    for (int i = 0; i < b; i++) // Laço de multiplicação
+    {
+        res += a;
+    }
+    return res;
+}
+
 int Potencia(int x, int N)
 {
-	int pow = 1;
-	for (int i = 0; i < N; ++i)
-	{
-		pow = pow * x;
+	int res = x;
+    if(N == 1)
+    	return x;
+    else if(N == 0)
+    	return 1;
+    else
+    {
+	    for (int k = 0; k < N-1; k++)
+		{
+			res = Multiplica(res,x); 
+		}
 	}
-	return pot;
+	return res;
 }
 ```
 
 (b) Escreva a sub-rotina equivalente na linguagem Assembly do MSP430. `x` e `n` são fornecidos através dos registradores R15 e R14, respectivamente, e a saída deverá ser fornecida no registrador R15.
 
 ```assembly
-; R15 = x & R14 = n
 POT: NOP
-; #TODO - Casos triviais (n = 0,1)
-MOV R14,R13 ; R13 = n
-MOV R15,R14 ; R14 = x 
-MOV #1, R15 ; R15 = pow = 1
-FOR_POT: NOP
-CMP #0,R13 ; n > 0 ? mult : ret
-JEQ END
-call #mult  ; multiplica pow (R15) por x (R14)
-DEC R13     ; R13-- / n--
-JMP FOR_POT
-END: RET
+cmp #0,R14
+jne POTC
+mov #1,R15
+ret
 
-; #TODO - Refazer os testes dessa função
+cmp #1,R14
+jne POTC
+ret 
+
+POTC: NOP
+sub #1,R14
+push R13
+push R12
+push R11
+mov #0,R13 ;r13 é k
+mov R15,R12 ;r12 é res=x
+mov R15,R11 ;R11 é x
+POTL: cmp R13,R14
+jeq POTE
+;res = Multiplica(res,x)
+push R15
+mov R12,R15
+push R14
+mov R11,R14
+call #MULT
+pop R14
+mov R15,R12
+pop R15
+inc R13
+jmp POTL
+POTE: mov R12,R15
+pop R11
+pop R12
+pop R13
+ret
+
 MULT: NOP
-PUSH R14 ; guarda x (R14) na pilha
-PUSH R13 ; guarda n (R13) na pilha
-MOV R15,R13 ; R13 guardará o valor de pow inalterado
-FOR_MULT: NOP
-CMP #1,R14 ; n > 0 ? soma : ret
-JEQ END
-ADD R13,R15
-DEC R14
-JMP FOR_MULT
-END: NOP
-POP R13
-POP R14
-RET
+push R13
+push R12
+mov #0,R13
+mov #0,R12
+MFOR: NOP
+cmp R12,R14
+jeq MEXIT
+add R15,R13
+inc R12
+jmp MFOR
+MEXIT: mov R13,R15
+pop R12
+pop R13
+ret
 ```
+
+3. Escreva uma sub-rotina na linguagem Assembly do MSP430 que calcula a divisão de `a` por `b`, onde `a`, `b` e o valor de saída são inteiros de 16 bits. `a` e `b` são fornecidos através dos registradores R15 e R14, respectivamente, e a saída deverá ser fornecida através do registrador R15.
+
+
