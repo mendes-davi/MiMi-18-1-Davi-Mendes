@@ -147,4 +147,158 @@ ret
 
 3. Escreva uma sub-rotina na linguagem Assembly do MSP430 que calcula a divisão de `a` por `b`, onde `a`, `b` e o valor de saída são inteiros de 16 bits. `a` e `b` são fornecidos através dos registradores R15 e R14, respectivamente, e a saída deverá ser fornecida através do registrador R15.
 
+```assembly
+DIV: NOP
+cmp #0,R14
+jne DI2
+mov #-1,R15
+ret
+DI2: cmp R14,R15
+jge DIVL
+mov #0,R15
+ret
+DIVL: NOP
+push R13 ; R13 é i
+push R12 ; R12 é res
+mov #1,R13
+DIVT: NOP
+push R15
+mov R13,R15
+call #MULT
+mov R15,R12
+pop R15
+cmp R15,R12
+jge DIVE
+inc R13
+jmp DIVT
+DIVE: NOP
+mov R13,R15
+dec R15
+pop R12
+pop R13
+ret
+```
 
+4. Escreva uma sub-rotina na linguagem Assembly do MSP430 que calcula o resto da divisão de `a` por `b`, onde `a`, `b` e o valor de saída são inteiros de 16 bits. `a` e `b` são fornecidos através dos registradores R15 e R14, respectivamente, e a saída deverá ser fornecida através do registrador R15.
+
+```assembly
+MODF: NOP
+push R13
+push R12
+mov R15,R13
+mov R14,R12
+call #DIV
+mov R12,R14
+call #MULT
+sub R15,R13
+mov R13,R15
+pop R12
+pop R13
+ret
+```
+
+5. (a) Escreva uma função em C que indica a primalidade de uma variável inteira sem sinal, retornando o valor 1 se o número for primo, e 0, caso contrário. Siga o seguinte protótipo:
+
+```C
+int Primalidade(unsigned int x);
+```
+
+```C
+int Primalidade(unsigned int x)
+{
+	int i,k;
+
+	if(x < 2)
+		return 0;
+	else if(x < 4)
+		return 1;
+	else if(x % 2 == 0)
+		return 0;
+	else if(x % 3 == 0)
+		return 0;
+	i = 5;
+	while(Multiplica(i,i) <= x)
+	{
+		k = i+2;
+		if(x % i == 0)
+			return 0;
+		if(x % k == 0)
+			return 0;
+		i += 6;
+	}
+	return 1;
+}
+```
+
+(b) Escreva a sub-rotina equivalente na linguagem Assembly do MSP430. A variável de entrada é fornecida pelo registrador R15, e o valor de saída também.
+
+```assembly
+PRIM: NOP
+push R14
+push R13
+push R12
+mov R15,R14
+cmp #2,R15
+jl NPRIM
+cmp #4,R15
+jl SPRIM
+
+push R14
+mov #2,R14
+call #MODF
+pop R14
+cmp #0,R15
+jeq NPRIM
+
+push R14
+mov #3,R14
+call #MODF
+pop R14
+cmp #0,R15
+jeq NPRIM
+
+mov #5,R13
+PRW: NOP
+push R15
+push R14
+mov R13,R15
+mov R13,R14
+call #MULT
+mov R15,R13
+pop R14
+pop R15
+cmp R13,R15
+jge PROPER
+jmp SPRIM
+
+PROPER: NOP
+mov R13,R12
+add #2,R12
+
+push R14
+push R15
+mov R13,R14
+call #MODF
+cmp #0,R15
+jeq NPRIM
+pop R15
+mov R12,R14
+cmp #0,R15
+jeq NPRIM        
+pop R14
+
+add #6,R13
+jmp PRW
+
+NPRIM: mov #0,R15
+jmp PRIME
+
+SPRIM: mov #1, R15
+jmp PRIME
+
+PRIME: NOP
+pop R12
+pop R13
+pop R14
+ret
+```
