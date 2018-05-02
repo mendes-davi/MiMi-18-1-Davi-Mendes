@@ -234,9 +234,9 @@ int Primalidade(unsigned int x)
 
 ```assembly
 PRIM: NOP
-push R14
-push R13
-push R12
+push R14 ; cópia de x
+push R13 ; i
+push R12 ; k
 mov R15,R14
 cmp #2,R15
 jl NPRIM
