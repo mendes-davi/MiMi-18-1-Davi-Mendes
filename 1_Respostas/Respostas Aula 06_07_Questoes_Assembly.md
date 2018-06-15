@@ -302,3 +302,176 @@ pop R13
 pop R14
 ret
 ```
+
+6. Escreva uma função em C que calcula o duplo fatorial de n, representado por n!!. Se n for ímpar, n!! = 1*3*5*...*n, e se n for par, n!! = 2*4*6*...*n. Por exemplo, 9!! = 1*3*5*7*9 = 945 e 10!! = 2*4*6*8*10 = 3840. Além disso, 0!! = 1!! = 1.
+
+```C
+unsigned long long duploFatorial(unsigned long long n)
+{
+    if (n == 0 || n==1)
+      return 1;
+    return n*doublefactorial(n-2);
+}
+```
+
+7. (a) Escreva uma função em C que calcula a função exponencial utilizando a série de Taylor da mesma. Considere o cálculo até o termo n = 20. O protótipo da função é `double ExpTaylor(double x);`
+
+```C
+double ExpTaylor(double x)
+{
+	double exp = 1;
+
+	for(int powerValue = 1; powerValue <= 21 ; powerValue++)
+	{
+	exp += pow(x,powerValue)/fatorial(powerValue);
+	}
+	return exp;
+{
+```
+
+(b) Escreva a sub-rotina equivalente na linguagem Assembly do MSP430, mas considere que os valores de entrada e de saída são inteiros de 16 bits. A variável de entrada é fornecida pelo registrador R15, e o valor de saída também.
+
+```assembly
+ExpTaylor: ; R15 = x
+	push R5 ; guarda R5 na pilha
+	push R6 ; guarda R6 na pilha
+	clr R5 ; n = 0
+	clr R6 ; sum = 0
+
+Forloop:
+	cmp #20, R5
+	jge For_Loop_End ; se R5 >= #20, sai do loop
+	mov.w R5, R14 ; R14 = R5 = n
+	call Potencia ; R15 = x**n
+	push R15 ; guarda x**n na pilha
+
+	mov.w R5, R15 ; R15 = n
+	call Fatorial ; fatorial de R15 = fatorial(n)
+	mov.w R15, R14 ; R14 = fatorial(n)
+	pop R15 ; recupera x**n da pilha em R15
+
+	call Div ; R15 = (x**n)/fatorial(n)
+
+	add.w R15, R6 ; sum+= (x**n)/fatorial(n)
+	jmp Forloop
+
+For_Loop_End:
+	pop R6 ; recupera R6 da pilha
+	pop R5 ; recuepra R6 da pilha
+	ret
+```
+
+8. Escreva uma sub-rotina na linguagem Assembly do MSP430 que indica se um vetor esta ordenado de forma decrescente. Por exemplo: [5 4 3 2 1] e [90 23 20 10] estão ordenados de forma decrescente. [1 2 3 4 5] e [1 2 3 2] não estão. O primeiro endereço do vetor é fornecido pelo registrador R15, e o tamanho do vetor é fornecido pelo registrador R14. A saída deverá ser fornecida no registrador R15, valendo 1 quando o vetor estiver ordenado de forma decrescente, e valendo 0 em caso contrário.
+
+```assembly
+OrdemDec:
+	push.w R5
+	push.w R6
+	mov.w R15, R6 ; R6 = &a[0]
+	mov.w R14, R5; R5 = len(a)
+	mov.w R6 ,R14
+	incd.w R14
+
+CompLoop:
+	cmp R15, R14
+	jl Naodec ; se a(x+1)<a(x), não é decrescente
+	incd.w R15
+	incd.w R14
+	dec.w R5
+	cmp R5, #0
+	jne CompLoop ; se R5 = 0, é decrescente
+	pop.w R6
+	pop.w R5
+	mov.w #1, R15
+	ret
+
+NaoDec:
+	pop.w R6
+	pop.w R5
+	clr R15
+	ret
+
+```
+
+9. Escreva uma sub-rotina na linguagem Assembly do MSP430 que calcula o produto escalar de dois vetores, `a` e `b`. O primeiro endereço do vetor `a` deverá ser passado através do registrador R15, o primeiro endereço do vetor `b` deverá ser passado através do registrador R14, e o tamanho do vetor deverá ser passado pelo registrador R13. A saída deverá ser fornecida no registrador R15.
+
+```assembly
+Prod_Int:
+	push R5 ; guarda R5 na pilha
+	mov.w R14, R5 ; R5 = &b(0)
+	push R6 ; guarda R6 na pilha
+	mov.w R15, R6 ; R6 = &a(0)
+	clr R12 ; R12 = 0
+
+PI_Loop:
+	mov.w 0(R6), R15
+	mov.w 0(R5), R14
+	call Multiplica ; r15 = R15 * R14
+	add.w R15, R12
+	incd.w R6
+	incd.w R5
+	dec.w R13
+
+Primo_Loop_End:
+	mov.w R12, R15
+	pop R6
+	pop R5
+	ret
+```
+
+10. (a) Escreva uma função em C que indica se um vetor é palíndromo. Por exemplo:
+	[1 2 3 2 1] e [0 10 20 20 10 0] são palíndromos.
+	[5 4 3 2 1] e [1 2 3 2] não são.
+Se o vetor for palíndromo, retorne o valor 1. Caso contrário, retorne o valor 0. O protótipo da função é:
+
+```C
+int Palindromo(int vetor[ ], int tamanho);
+```
+
+```C
+int Palindromo(int vetor[ ], int tamanho){
+	int count = 0;
+	
+	while(vetor[count] == vetor[tamanho-1 -count] && count < tamanho)
+		count++;
+return count == tamanho ? 1 : 0; // 1 para palindromo e 0 para nao palindromo
+}
+
+```
+
+(b) Escreva a sub-rotina equivalente na linguagem Assembly do MSP430. O endereço do vetor de entrada é dado pelo registrador R15, o tamanho do vetor é dado pelo registrador R14, e o resultado é dado pelo registrador R15.
+
+```assembly
+Palindromo:
+	push R6 ; guarda R6 na pilha
+	mov.w R14, R6 ; R6 = tamanho
+	clr R13 ; R13 = 0
+	dec R14 ; tamanho--
+	rla R14 ; tamanho = 2 * tamanho
+	add R15, R14 ; R14 = &a[tamanho-1]
+
+Palin_Loop:
+	cmp R6, R13
+	jge Palin_Loop_End ; se count >= tamanho, sai do loop
+	cmp 0(R15), 0(R14)
+	jne Palin_Loop_End ; se vetor[count] == vetor[tamanho-1 -count, continua no loop
+
+	incd.w R15
+	decd.d R14
+	inc.w R13 ; count++
+
+	jmp Palin_Loop
+
+Palin_Loop_End:
+	cmp R13, R6 ; se count = tamanho, ret 1
+	jne Palin_False
+	pop R6 ; recupera R6 da pilha
+	mov.w #1, R15
+	ret
+	
+Palin_False: 
+	pop R6 ; recupera R6 da pilha
+	clr R15 ; se count != tamanho, ret 0
+	ret
+```
+
