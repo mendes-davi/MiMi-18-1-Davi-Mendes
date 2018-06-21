@@ -118,9 +118,121 @@ void main(void)
         ---  ==> D
 ```
 
+```C
+
+#define SA BIT0
+#define SB BIT1
+#define SC BIT2
+#define SD BIT3
+#define SE BIT4
+#define SF BIT5
+#define SG BIT6
+
+void EscreveDigito(volatile char dig)
+{
+	P1OUT = 0;
+	switch(dig)
+	{
+		case 'A':
+			P1OUT |= (SA + SB + SC + SE + SF);
+			break;
+		case 'B':
+			P1OUT |= (SF + SE + SC + SD + SG);
+			break;
+		case 'C':
+			P1OUT |= (SA + SF + SE + SD);
+			break;
+		case 'D':
+			P1OUT |= ~(SA + SF);
+			break;
+		case 'E':
+			P1OUT |= ~(SB + SC);
+			break;
+		case 'F':
+			P1OUT |= ~(SB + SC + SD);
+			break;
+		case '9':
+			P1OUT |= ~(SD + SE);
+			break;
+		case '8':
+			P1OUT ˆ= (P1OUT);
+			break;
+		case '7':
+			P1OUT |= (SA + SB + SC);
+			break;
+		case '6':
+			P1OUT |= ~(SB);
+			break;
+		case '5':
+			P1OUT |= ~(SB + SE);
+			break;
+		case '4':
+			P1OUT |= ~(SA + SE + SD);
+			break;
+		case '3':
+			P1OUT |= ~(SF + SE);
+			break;
+		case '2':
+			P1OUT |= ~(SF + SC);
+			break;
+		case '1':
+			P1OUT |= (SB + SC);
+			break;
+		case '0':
+			P1OUT |= ~(SG);
+			break;	
+		default:
+			break;
+	}
+}
+```
+
 7. Multiplexe 2 displays de 7 segmentos para apresentar a seguinte sequência em loop:
 	00 - 11 - 22 - 33 - 44 - 55 - 66 - 77 - 88 - 99 - AA - BB - CC - DD - EE - FF
 
+```C
+#define DISPLAYOUT P2OUT
+#define DISPLAY1 BIT0
+#define DISPLAY2 BIT1
+
+void Atraso_ms(volatile unsigned int ms); //Função para delay com timer.
+
+void SeqTeste()
+{
+	//Supondo cátodo comum ligado aos BITS 0 e 1 da porta 2.
+	for(int i = 0; i <= 9; i++)
+	{
+		DISPLAYOUT |= DISPLAY1 + ~DISPLAY2;
+		EscreveDigito((char) '0'+i);
+		Atraso_ms(10);
+		DISPLAYOUT |= DISPLAY2 + ~DISPLAY1;
+		EscreveDigito((char) '0'+i);
+		Atraso_ms(10);
+	}
+		for(int i = 0; i <= 6; i++)
+	{
+		DISPLAYOUT |= DISPLAY1 + ~DISPLAY2;
+		EscreveDigito((char) 'A'+i);
+		Atraso_ms(10);
+		DISPLAYOUT |= DISPLAY2 + ~DISPLAY1;
+		EscreveDigito((char) 'A'+i);
+		Atraso_ms(10);
+	}
+}
+
+void Atraso_ms(volatile unsigned int ms)
+{
+	TACCR0 = 1000-1;
+	TACTL = TACLR;
+	TACTL = TASSEL_2 + ID_0 + MC_1;
+	while(ms--)
+	{
+		while((TACTL&TAIFG)==0);
+		TACTL &= ~TAIFG;
+	}
+	TACTL = MC_0;
+}
+```
 
 
 
